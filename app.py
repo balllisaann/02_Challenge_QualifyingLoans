@@ -127,11 +127,13 @@ def save_csv(qualifying_loans, output_path):
     with open(output_path, 'w', newline='') as csvfile:
         # creating a csv writer object 
         csvwriter = csv.writer(csvfile) 
-            
-        # writing the list of lists on object qualifying_loans using iteration
-        for loan in qualifying_loans:
-            csvwriter.writerow(loan)
-    #print("Ooops, the file failed to write.")
+
+        try:            
+            # writing the list of lists on object qualifying_loans using iteration
+            for loan in qualifying_loans:
+                csvwriter.writerow(loan)
+        except csvwriter.Error as e:
+            sys.exit('file {}, line {}: {}'.format(output_path, csvwriter.line_num, e))
 
 def save_qualifying_loans(qualifying_loans):
     """Saves the qualifying loans to a CSV file.
@@ -162,6 +164,9 @@ def save_qualifying_loans(qualifying_loans):
     # add a *.csv extension to the file name stem, just to make sure it in a .csv type of file
     csvpath = csvpath.stem + ".csv"
 
+    8# I'm going to add a header row to qualifying_loans.
+    # The header is the same info as the input file (Lender,Max Loan Amount,Max LTV,Max DTI,Min Credit Score,Interest Rate).
+    qualifying_loans.insert(0, ["Lender","Max Loan Amount","Max LTV","Max DTI","Min Credit Score","Interest Rate"])
     # Now that we have a valid file name to save to, call the save_csv fuction to actually create and save the *.csv file
     save_csv(qualifying_loans, csvpath)
 
