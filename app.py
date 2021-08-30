@@ -48,19 +48,11 @@ def get_applicant_info():
         Returns the applicant's financial information.
     """
 
-    """""
     credit_score = questionary.text("What's your credit score?").ask()
     debt = questionary.text("What's your current amount of monthly debt?").ask()
     income = questionary.text("What's your total monthly income?").ask()
     loan_amount = questionary.text("What's your desired loan amount?").ask()
     home_value = questionary.text("What's your home value?").ask()
-    """
-
-    credit_score = 740
-    debt = 500
-    income = 5000
-    loan_amount = 20000
-    home_value = 200000
 
     credit_score = int(credit_score)
     debt = float(debt)
@@ -111,7 +103,7 @@ def find_qualifying_loans(bank_data, credit_score, debt, income, loan, home_valu
 
     return bank_data_filtered
 
-def save_csv(qualifying_loans, output_path):
+def save_csv(qualifying_loans, filename):
     """ A function uses the csv library to save the qualifying data as a file.
     Inputs:
     - qualifying_loans: assuming it is a list of lists
@@ -124,7 +116,7 @@ def save_csv(qualifying_loans, output_path):
     Documentation: https://docs.python.org/3/library/csv.html#writer-objects
     """
 
-    with open(output_path, 'w', newline='') as csvfile:
+    with open(filename, 'w', newline='') as csvfile:
         # creating a csv writer object 
         csvwriter = csv.writer(csvfile) 
 
@@ -133,7 +125,7 @@ def save_csv(qualifying_loans, output_path):
             for loan in qualifying_loans:
                 csvwriter.writerow(loan)
         except csvwriter.Error as e:
-            sys.exit('file {}, line {}: {}'.format(output_path, csvwriter.line_num, e))
+            sys.exit('file {}, line {}: {}'.format(filename, csvwriter.line_num, e))
 
 def save_qualifying_loans(qualifying_loans):
     """Saves the qualifying loans to a CSV file.
@@ -143,6 +135,7 @@ def save_qualifying_loans(qualifying_loans):
     """
     # @TODO: Complete the usability dialog for savings the CSV Files.
     # YOUR CODE HERE!
+
     # check to see if there are any qualifying loans
     # if there are no qualifying loans, let the user know and then exit
     if len(qualifying_loans) <= 0:
@@ -158,13 +151,14 @@ def save_qualifying_loans(qualifying_loans):
     elif yes_no != "y":
         sys.exit(f"Sorry, we don't recognize that command: {yes_no}.  Goodbye")
 
+    # Prompt the user for a file path to save the file
     csvpath = questionary.text("Please enter a file path to save the list of qualifying loans to (.csv):").ask()
     csvpath = Path(csvpath)
 
-    # add a *.csv extension to the file name stem, just to make sure it in a .csv type of file
+    # add a *.csv extension to the file name stem, just to make sure it is a .csv type of file
     csvpath = csvpath.stem + ".csv"
 
-    8# I'm going to add a header row to qualifying_loans.
+    # Add a header row to qualifying_loans-=.
     # The header is the same info as the input file (Lender,Max Loan Amount,Max LTV,Max DTI,Min Credit Score,Interest Rate).
     qualifying_loans.insert(0, ["Lender","Max Loan Amount","Max LTV","Max DTI","Min Credit Score","Interest Rate"])
     # Now that we have a valid file name to save to, call the save_csv fuction to actually create and save the *.csv file
